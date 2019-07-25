@@ -271,7 +271,7 @@ class AdGroup(Base):
             payload['AssociatedBidLists'].append({"BidListId": bidlist_id, "IsEnabled": True})
 
         method = "PUT"
-        url = '{0}/{1}'.format(self.get_url(), 'bidlist')
+        url = '{0}'.format(self.get_url())
 
         response = self._execute(method, url, json.dumps(payload))
         return self._get_response_object(response)
