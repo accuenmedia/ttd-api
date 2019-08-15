@@ -112,7 +112,9 @@ class Base(dict):
         try:
             rval = {}
             rval["response_code"] = response.status_code
+            rval["request_body"] = self.curl_command
             obj = json.loads(response.text)
+
             if response.status_code == 200:
                 data = []
                 results = obj.get('Result')
@@ -120,14 +122,12 @@ class Base(dict):
                     data.append(result)
 
                 rval["msg_type"] = "success"
-                rval["msg"] = ""
+                rval["msg"] = "Success"
                 rval["data"] = obj
-                rval["request_body"] = ""
             else:
                 rval["msg_type"] = "error"
                 rval["msg"] = obj.get("Message")
                 rval["data"] = obj.get("ErrorDetails")
-                rval["request_body"] = self.curl_command
         except:
             rval = response
 
@@ -137,17 +137,17 @@ class Base(dict):
         try:
             rval = {}
             rval["response_code"] = response.status_code
+            rval["request_body"] = self.curl_command
             obj = json.loads(response.text)
+
             if response.status_code == 200:
                 rval["msg_type"] = "success"
-                rval["msg"] = ""
+                rval["msg"] = "Success"
                 rval["data"] = obj
-                rval["request_body"] = ""
             else:
                 rval["msg_type"] = "error"
                 rval["msg"] = obj.get("Message")
                 rval["data"] = obj.get("ErrorDetails")
-                rval["request_body"] = self.curl_command
         except:
             rval = response
 
