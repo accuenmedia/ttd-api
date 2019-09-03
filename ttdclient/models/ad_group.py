@@ -262,13 +262,11 @@ class AdGroup(Base):
         
         self['RTBAttributes']['BudgetSettings']['Budget']['Amount'] = budget
 
-    def set_bid_list(self, bidlist_ids, adgroup_id):
+    def set_bid_list(self, bidlists, adgroup_id):
         payload = { 
             "AdGroupId": adgroup_id,
-            "AssociatedBidLists": []
+            "AssociatedBidLists": bidlists
         }
-        for bidlist_id in bidlist_ids:
-            payload['AssociatedBidLists'].append({"BidListId": bidlist_id, "IsEnabled": True})
 
         method = "PUT"
         url = '{0}'.format(self.get_url())
