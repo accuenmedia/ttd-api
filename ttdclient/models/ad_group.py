@@ -285,8 +285,12 @@ class AdGroup(Base):
     def set_market_type(self, adgroup_id, target):
         payload = {
             "AdGroupId": adgroup_id,
+            "RTBAttributes": {
+                "ContractTargeting": {
+                    "AllowOpenMarketBiddingWhenTargetingContracts": target
+                }
+            }
         }
-        payload['RTBAttributes']['ContractTargeting']['AllowOpenMarketBiddingWhenTargetingContracts'] = target
 
         method = "PUT"
         url = '{0}'.format(self.get_url())
