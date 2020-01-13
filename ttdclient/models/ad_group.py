@@ -281,4 +281,15 @@ class AdGroup(Base):
 
         response = self._execute(method, url, json.dumps(payload))
         return self._get_response_objects(response)
-        
+
+    def set_market_type(self, adgroup_id, target):
+        payload = {
+            "AdGroupId": adgroup_id,
+        }
+        payload['RTBAttributes']['ContractTargeting']['AllowOpenMarketBiddingWhenTargetingContracts'] = target
+
+        method = "PUT"
+        url = '{0}'.format(self.get_url())
+
+        response = self._execute(method, url, json.dumps(payload))
+        return self._get_response_object(response)
