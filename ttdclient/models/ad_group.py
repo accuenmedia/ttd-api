@@ -11,11 +11,17 @@ class AdGroup(Base):
     def getId(self):
         return self.data.get("AdGroupId")
 
-    def get_by_campaign(self, campaign_id):
-        payload = { "CampaignId": campaign_id,
-                    "PageStartIndex": 0,
-                    "Availabilities": ["Available","Archived"],
-                    "PageSize": None }
+    def get_by_campaign(self, campaign_id, **kwargs):
+        payload = {
+            "CampaignId": campaign_id,
+            "PageStartIndex": 0,
+            "PageSize": None
+        }
+        if 'active_only' in kwargs and kwargs['active_only']:
+            payload['Availabilities'] = ["Available"]
+        else:
+            payload['Availabilities'] = ["Available", "Archived"]
+
         method = "POST"
         url = '{0}/{1}'.format(self.get_url(), 'query/campaign')
         
