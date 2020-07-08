@@ -12,21 +12,52 @@ class AdGroup(Base):
         return self.data.get("AdGroupId")
 
     def get_by_campaign(self, campaign_id, **kwargs):
+        page_size = 100
+
         payload = {
             "CampaignId": campaign_id,
             "PageStartIndex": 0,
-            "PageSize": None
+            "PageSize": page_size
         }
         if 'active_only' in kwargs and kwargs['active_only']:
             payload['Availabilities'] = ["Available"]
         else:
             payload['Availabilities'] = ["Available", "Archived"]
 
+        headers = Base.connection.get_authorization()
+        headers['Content-Type'] = 'application/json'
         method = "POST"
         url = '{0}/{1}'.format(self.get_url(), 'query/campaign')
         
+        rval = {}
+        rval["request_body"] = "curl -XPOST -H 'Content-Type: application/json' -H 'TTD-Auth: {0}' -d '{1}' '{2}'".format(headers['TTD-Auth'], payload, url)
+        rval["data"] = []
+
         response = self._execute(method, url, json.dumps(payload))
-        return self._get_response_objects(response)
+        rval["response_code"] = response.status_code
+        if response.status_code == 200:
+            rval["msg_type"] = "success"
+            rval["msg"] = "Success"
+            rval["data"] += response.json().get('Result')
+        else:
+            rval["msg_type"] = "error"
+            rval["msg"] = response.json().get("Message")
+            rval["data"] = response.json().get("ErrorDetails")
+
+        while rval.get('msg_type') != 'error' and response.json().get('TotalFilteredCount') > payload["PageStartIndex"]:
+            payload["PageStartIndex"] += page_size
+
+            response = self._execute(method, url, json.dumps(payload))
+
+            if response.status_code == 200:
+                rval["data"] += response.json().get('Result')
+            else:
+                rval["response_code"] = response.status_code
+                rval["msg_type"] = "error"
+                rval["msg"] = response.json().get("Message")
+                rval["data"] = response.json().get("ErrorDetails")
+
+        return json.dumps(rval)
 
     def get_by_name(self, campaign_id, name):
         payload = { "CampaignId": campaign_id,
