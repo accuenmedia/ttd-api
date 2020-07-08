@@ -21,4 +21,4 @@ class Base(unittest.TestCase):
                                password=self.password,
                                url=self.url)
 
-        super(Base, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)

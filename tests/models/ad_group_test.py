@@ -1,6 +1,10 @@
+import config
+
 import unittest
 import json
 import time
+
+from ttdclient.service.connection import Connection
 
 from ttdclient.models.ad_group import AdGroup
 from ttdclient.models.advertiser import Advertiser
@@ -10,24 +14,29 @@ from ttdclient.models.site_list import SiteList
 from tests.base import Base
 
 
-class AdGroupTest(Base):
+class AdGroupTest(unittest.TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        cls.conn = Connection(
+            username=config.username,
+            password=config.password,
+            url=config.url
+        )
 
     def testGetAdGroup(self):
         loader = AdGroup(AdGroupTest.conn)
-        ad_group = loader.find('gzv3s54')
+        ad_group = loader.find('8531y0h')
         ad_group = json.loads(ad_group).get('data')
-        assert ad_group.get('AdGroupId') is not None
+        self.assertEqual(ad_group.get('AdGroupId'), '8531y0h')
 
     def testGetByCampaign(self):
         loader = AdGroup(AdGroupTest.conn)
-        ad_groups = loader.get_by_campaign(self.campaign_id)
-        ad_groups = json.loads(ad_groups).get("data").get("Result")
-        for test_group in ad_groups:
-            assert test_group.get('AdGroupId') is not None
+        ad_groups = loader.get_by_campaign(config.campaign_id, active_only=False)
+        import json
+        ads = json.loads(ad_groups)
+        self.assertEqual(len(ads.get('data')), 342)
 
-        ad_group_name = 'Test SMP API Ad Group'
-        ad_groups = loader.get_by_name(self.campaign_id, ad_group_name)
+        ad_groups = loader.get_by_campaign(config.campaign_id, active_only=True)
         ad_groups = json.loads(ad_groups).get("data").get("Result")
-        for test_group in ad_groups:
-            assert test_group.get('AdGroupName') == 'Test SMP API Ad Group'
+        self.assertEqual(len(ad_groups), 195)
