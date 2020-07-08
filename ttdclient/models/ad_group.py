@@ -34,6 +34,7 @@ class AdGroup(Base):
         rval["data"] = []
 
         response = self._execute(method, url, json.dumps(payload))
+        rval["response_code"] = response.status_code
         if response.status_code == 200:
             rval["msg_type"] = "success"
             rval["msg"] = "Success"
@@ -51,6 +52,7 @@ class AdGroup(Base):
             if response.status_code == 200:
                 rval["data"] += response.json().get('Result')
             else:
+                rval["response_code"] = response.status_code
                 rval["msg_type"] = "error"
                 rval["msg"] = response.json().get("Message")
                 rval["data"] = response.json().get("ErrorDetails")

@@ -34,7 +34,7 @@ class AdGroupTest(unittest.TestCase):
         loader = AdGroup(AdGroupTest.conn)
         ad_groups = loader.get_by_campaign(config.campaign_id, active_only=False)
         import json
-        ads = json.loads(ad_groups)
+        ads = json.loads(ad_groups) 
         self.assertEqual(len(ads.get('data')), 342)
 
         ad_groups = loader.get_by_campaign(config.campaign_id, active_only=True)
